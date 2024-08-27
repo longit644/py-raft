@@ -1,0 +1,60 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Example KV - 1",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/kv/src/app.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "../../../src",
+            },
+            "args": [
+                "--port", "5001",
+                "--db-path", "./.data/server-1/database",
+                "--server-id", "1",
+                "--raft-port", "6001",
+                "--raft-metadata-dir", "./.data/server-1/raft",
+                "--raft-is-voter", "true",
+            ],
+            "cwd": "${workspaceFolder}/examples/kv/src"
+        },
+        {
+            "name": "Python: Example KV - 2",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/kv/src/app.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "../../../src",
+            },
+            "args": [
+                "--port", "5002",
+                "--db-path", "./.data/server-2/database",
+                "--server-id", "2",
+                "--raft-port", "6002",
+                "--raft-metadata-dir", "./.data/server-2/raft",
+            ],
+            "cwd": "${workspaceFolder}/examples/kv/src"
+        },
+        {
+            "name": "Python: Example KV - 3",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/examples/kv/src/app.py",
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "../../../src",
+            },
+            "args": [
+                "--port", "5003",
+                "--db-path", "./.data/server-3/database",
+                "--server-id", "3",
+                "--raft-port", "6003",
+                "--raft-metadata-dir", "./.data/server-3/raft",
+            ],
+            "cwd": "${workspaceFolder}/examples/kv/src"
+        }
+    ]
+}

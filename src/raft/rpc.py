@@ -5,8 +5,8 @@
 
 from abc import ABC, abstractmethod
 from threading import Thread
-from typing import Any, Optional
-from dataclasses import dataclass, field
+from typing import Any
+from dataclasses import dataclass
 
 from .log import Log
 

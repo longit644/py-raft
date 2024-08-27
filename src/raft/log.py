@@ -6,10 +6,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import IntEnum
-import queue
 from threading import RLock
 from typing import Any, Optional
 import base64
+import queue
 
 from . import util
 

@@ -7,7 +7,6 @@ from typing import Any
 import os
 import threading
 import msgpack
-import time
 import json
 
 from .logging import logger
@@ -54,11 +53,6 @@ def ensure_dir(dir: str):
         # Create the directory if it does not exist.
         os.makedirs(dir)
         logger.info(f'Created directory: {dir}')
-
-
-def monotonic_ms() -> int:
-    '''Returns monotonic clock, cannot go back, in milliseconds.'''
-    return int(time.monotonic() * 1000)
 
 
 def write_msgpack(data: Any, filename: str) -> None:

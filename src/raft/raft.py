@@ -3,12 +3,11 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-
 from enum import IntEnum
-import queue
-from typing import Optional
 from threading import Event, Thread
+from typing import Optional
 import concurrent.futures
+import queue
 import random
 import time
 
@@ -422,8 +421,10 @@ class Raft(rpc.Handler):
                     # Continue if no task is available within the timeout.
                     continue
                 except Exception as e:
-                    logger.error(f'Error in worker: {e}, server: {self._state.id}, term: {self._state.current_term}, role: {self._state.role.name}')
-            logger.debug(f'End worker loop, server: {self._state.id}, term: {self._state.current_term}, role: {self._state.role.name}')
+                    logger.error(
+                        f'Error in worker: {e}, server: {self._state.id}, term: {self._state.current_term}, role: {self._state.role.name}')
+            logger.debug(
+                f'End worker loop, server: {self._state.id}, term: {self._state.current_term}, role: {self._state.role.name}')
 
         # Start the worker thread.
         thread = Thread(target=worker)
@@ -531,7 +532,7 @@ class Raft(rpc.Handler):
         '''
         random.seed(time.time())
         self._reset_election_time()
-        
+
         # Start all necessary threads for the Raft server.
         worker_thread = self._run_worker()
         timeout_ticker_thread = self._run_timeout_ticker()

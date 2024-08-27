@@ -9,14 +9,18 @@ import signal
 import raft
 import os
 import msgpack
+import logging
 
 import state
 import api
 
+logger = logging.getLogger(__name__)
+
 
 def signal_handler(signum, frame):
-    print('Graceful shutdown initiated...')
-    raft_handler.stop()  # Trigger server shutdown
+    logger.info('Graceful shutdown initiated...')
+    raft_handler.stop()
+    api_server.stop()
 
 
 @click.command()
@@ -27,7 +31,7 @@ def signal_handler(signum, frame):
 @click.option('--raft-metadata-dir', default='./', type=str, help='Directory for Raft metadata.')
 @click.option('--raft-is-voter', default=False, type=bool)
 def start_servers(port: int, db_path: str, server_id: int, raft_port: int, raft_metadata_dir: str, raft_is_voter: bool):
-    global raft_handler
+    global raft_handler, api_server
 
     local_db = Rdict(db_path)
     # Start the Raft and Raft RPC server.
@@ -55,14 +59,11 @@ def start_servers(port: int, db_path: str, server_id: int, raft_port: int, raft_
     api_server = api.Server(port, raft_handler, local_db)
     api_server_thread = api_server.run_in_thread()
 
-    signal.signal(signal.SIGINT, signal_handler)  # Handle Ctrl+C
-    signal.signal(signal.SIGTERM, signal_handler)  # Handle termination signals
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
 
-    if api_server_thread.is_alive():
-        api_server_thread.join()
-
-    if raft_handler_thread.is_alive():
-        raft_handler_thread.join()
+    api_server_thread.join()
+    raft_handler_thread.join()
 
 
 if __name__ == '__main__':

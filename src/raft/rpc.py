@@ -243,11 +243,7 @@ class Server(ABC):
 
     @abstractmethod
     def run_in_thread(self) -> Thread:
-        '''Run the server in a separate thread.
-
-        Returns:
-            Thread: The thread in which the server is running.
-        '''
+        '''Run the server in a separate thread.'''
         pass
 
     @abstractmethod

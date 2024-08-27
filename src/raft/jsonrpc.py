@@ -7,8 +7,8 @@ from abc import ABC
 from functools import reduce
 from jsonrpcserver import method, Result, Success, dispatch, Error
 from typing import Any, Callable
-from threading import Thread
-from werkzeug.serving import run_simple
+from threading import Event, Thread
+from werkzeug.serving import make_server
 import requests
 import jsonrpcclient
 import flask
@@ -220,23 +220,18 @@ class Server(metaclass=util.SingletonMeta):
                 dispatch(flask.request.get_data().decode()), content_type='application/json'
             )
 
-        run_simple(self._hostname, self._port, app, threaded=True)
-
-    def stop(self):
-        '''Stops the server.'''
-        return
+        self._server = make_server(
+            self._hostname, self._port, app, threaded=True)
+        logger.info(f"Starting server on port {self._port}...")
+        self._server.serve_forever()
 
     def run_in_thread(self) -> Thread:
-        '''
-        Runs the server in a separate thread.
-
-        Returns:
-            Thread: The thread running the server.
-        '''
         thread = Thread(target=self.run)
-        thread.daemon = True
         thread.start()
         return thread
+
+    def stop(self) -> None:
+        self._server.shutdown()
 
 
 class Factory(rpc.Factory):

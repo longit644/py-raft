@@ -530,6 +530,7 @@ class Raft(rpc.Handler):
         The method blocks until all threads have completed.
         '''
         random.seed(time.time())
+        
         # Start all necessary threads for the Raft server.
         worker_thread = self._run_worker()
         timeout_ticker_thread = self._run_timeout_ticker()
@@ -537,17 +538,10 @@ class Raft(rpc.Handler):
         rpc_server_thread = self._rpc_server.run_in_thread()
 
         # Wait for all threads to complete (blocking operation).
-        if rpc_server_thread.is_alive():
-            rpc_server_thread.join()
-
-        if worker_thread.is_alive():
-            worker_thread.join()
-
-        if timeout_ticker_thread.is_alive():
-            timeout_ticker_thread.join()
-
-        if heartbeat_ticker_thread.is_alive():
-            heartbeat_ticker_thread.join()
+        rpc_server_thread.join()
+        worker_thread.join()
+        timeout_ticker_thread.join()
+        heartbeat_ticker_thread.join()
 
     def run_in_thread(self) -> Thread:
         '''

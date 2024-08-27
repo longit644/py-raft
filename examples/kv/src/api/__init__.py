@@ -4,33 +4,40 @@
 # LICENSE file in the root directory of this source tree.
 
 from flask import Flask
-from threading import Thread
+from threading import Event, Thread
 from rocksdict import Rdict
-from werkzeug.serving import run_simple
-
+from werkzeug.serving import make_server
 from raft import Raft
+import logging
 
 from .kv import KVService
 from .admin import AdminService
 
+logger = logging.getLogger(__name__)
+
 
 class Server:
     def __init__(self, port: int, raft: Raft, local_db: Rdict) -> None:
-        self._app = Flask(__name__)
+        app = Flask(__name__)
         self._port = port
+        self._server = make_server('0.0.0.0', port, app, threaded=True)
 
         kv_service = KVService(raft, local_db)
-        self._app.register_blueprint(
+        app.register_blueprint(
             kv_service.get_blueprint(), url_prefix='/api/kv')
 
         admin_service = AdminService(raft)
-        self._app.register_blueprint(
+        app.register_blueprint(
             admin_service.get_blueprint(), url_prefix='/api/admin')
 
     def run(self) -> None:
-        run_simple('0.0.0.0', self._port, self._app, threaded=True)
+        logger.info(f"Starting server on port {self._port}...")
+        self._server.serve_forever()
 
     def run_in_thread(self) -> Thread:
         thread = Thread(target=self.run)
         thread.start()
         return thread
+    
+    def stop(self) -> None:
+        self._server.shutdown()

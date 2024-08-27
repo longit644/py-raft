@@ -530,6 +530,7 @@ class Raft(rpc.Handler):
         The method blocks until all threads have completed.
         '''
         random.seed(time.time())
+        self._reset_election_time()
         
         # Start all necessary threads for the Raft server.
         worker_thread = self._run_worker()
